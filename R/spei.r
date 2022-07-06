@@ -36,7 +36,7 @@ get_cwdiff <- function(precip, pet){
 get_spei <- function(cwdiff, freq=12, int_per=6, plot=TRUE){
 
     # Get start date
-    startmon <- xts::as.yearmon(index(cwdiff[1]))
+    startmon <- zoo::as.yearmon(index(cwdiff[1]))
     startyr <- floor(as.numeric(startmon))
     startmon <- as.numeric( format( startmon, '%m'))
 
