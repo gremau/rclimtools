@@ -36,13 +36,14 @@ get_cwdiff <- function(precip, pet){
 get_spei <- function(cwdiff, freq=12, int_per=6, plot=TRUE){
 
     # Get start date
-    startmon <- zoo::as.yearmon(index(cwdiff[1]))
+    startmon <- zoo::as.yearmon(zoo::index(cwdiff[1]))
     startyr <- floor(as.numeric(startmon))
-    startmon <- as.numeric( format( startmon, '%m'))
+    startmon <- as.numeric(format(startmon, '%m'))
 
     # Get spei for that integration period
-    spei_int <- SPEI::spei(ts(cwdiff, frequency=freq, start=c(startyr, startmon)),
-                     int_per, na.rm=TRUE)
+    spei_int <- SPEI::spei(ts(cwdiff, frequency=freq,
+			      start=c(startyr, startmon)),
+			   int_per, na.rm=TRUE)
 
     # Check for invalid values
     values <- spei_int$fitted

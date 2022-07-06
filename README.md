@@ -3,7 +3,7 @@ Climate tools in R
 
 ## Requirements
 
-You should have `xts` and `SPEI` installed.
+You should have `zoo` and `SPEI` installed.
 
 ## Installation
 
