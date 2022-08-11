@@ -5,16 +5,18 @@
 \title{Get SPEI values from climatic water differential at given frequency and
 integration period.}
 \usage{
-get_spei(cwdiff, freq = 12, int_per = 6, plot = TRUE)
+get_spei(cwdiff, scale = 6, na.rm = FALSE, plot = TRUE, locname = "no name")
 }
 \arguments{
 \item{cwdiff}{(xts obj) monthly climatic water differential time series}
 
-\item{freq}{(int) frequency of cwdiff estimates (12=monthly, 52=weekly)}
+\item{scale}{(int) time scale, or number of months used to calculate SPEI}
 
-\item{int_per}{(int) number of periods (weeks, months) used to calculate SPEI}
+\item{na.rm}{(bool) flag to mask NA values from the calculation (default=F)}
 
 \item{plot}{(bool) Flag for making diagnostic plot of SPEI}
+
+\item{locname}{(string) Name of the site, which appears in the plotc}
 }
 \value{
 spei_int (xts obj) spei time series at given integration period

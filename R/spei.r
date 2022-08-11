@@ -1,6 +1,3 @@
-library('SPEI')
-library('xts')
-
 #' Get climatic water difference from precip and pet data
 #'
 #' This function loads a file as a matrix. It assumes that the first column
@@ -17,7 +14,6 @@ get_cwdiff <- function(precip, pet){
     return(cwdiff)
 }
 
-
 #' Get SPEI values from climatic water differential at given frequency and
 #' integration period. 
 #'
@@ -27,34 +23,40 @@ get_cwdiff <- function(precip, pet){
 #' weekly frequency work (freq=52) if weekly PET is available.
 #'
 #' @param cwdiff (xts obj) monthly climatic water differential time series
-#' @param freq (int) frequency of cwdiff estimates (12=monthly, 52=weekly)
-#' @param int_per (int) number of periods (weeks, months) used to calculate SPEI
+#' @param scale (int) time scale, or number of months used to calculate SPEI
+#' @param na.rm (bool) flag to mask NA values from the calculation (default=F)
 #' @param plot (bool) Flag for making diagnostic plot of SPEI
+#' @param locname (string) Name of the site, which appears in the plotc
 #' @return spei_int (xts obj) spei time series at given integration period
 #' @return spei_int_interp (xts obj) spei_int with NA values interpolated over
 #' @export
-get_spei <- function(cwdiff, freq=12, int_per=6, plot=TRUE){
+get_spei <- function(cwdiff, scale=6,
+                     na.rm = FALSE, plot=TRUE, locname='no name'){
 
-    # Get start date
-    startmon <- zoo::as.yearmon(zoo::index(cwdiff[1]))
-    startyr <- floor(as.numeric(startmon))
-    startmon <- as.numeric(format(startmon, '%m'))
+    #Get last year and month of timeseries to anchor the timeseries
+    # that the spei function will take
+    endmon <- zoo::as.yearmon(zoo::index(cwdiff[length(cwdiff)]))
+    endyr <- floor(as.numeric(startmon))
+    endmon <- as.numeric(format(startmon, '%m'))
 
     # Get spei for that integration period
-    spei_int <- SPEI::spei(ts(cwdiff, frequency=freq,
-			      start=c(startyr, startmon)),
-			   int_per, na.rm=TRUE)
+    spei_int <- SPEI::spei(
+      ts(cwdiff, frequency=12, end=c(endyr, endmon)),
+      scale, na.rm=na.rm)
 
     # Check for invalid values
     values <- spei_int$fitted
     values[!is.finite(values)] <- NA
-    if (sum(is.na(values)) > (int_per - 1)){
+    if (sum(is.na(values)) > (scale - 1)){
         print('WARNING!!! - there are invalid values in the SPEI series')
     }
 
-
+    # Note that this will say 'SPI' on the y axis label, which is incorrect
+    # The plot.spei function doesn't deal with the `SPEI::spei()` call well and
+    # seems to set the label wrong. Passing ylab doesn't help either.
     if (plot){
-        plot(spei_int)
+        plot(spei_int, main=paste0(locname, ' - ', scale, ' month SPEI'),
+             ylab='SPEI')
     }
     # Extract the spei values from the returned object and make xts
     #spei_xts <- xts(as.vector(spei_int$fitted),  order.by=index(cwdiff))
