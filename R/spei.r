@@ -36,8 +36,8 @@ get_spei <- function(cwdiff, scale=6,
     #Get last year and month of timeseries to anchor the timeseries
     # that the spei function will take
     endmon <- zoo::as.yearmon(zoo::index(cwdiff[length(cwdiff)]))
-    endyr <- floor(as.numeric(startmon))
-    endmon <- as.numeric(format(startmon, '%m'))
+    endyr <- floor(as.numeric(endmon))
+    endmon <- as.numeric(format(endmon, '%m'))
 
     # Get spei for that integration period
     spei_int <- SPEI::spei(
