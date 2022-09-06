@@ -3,9 +3,9 @@
 \name{get_spei}
 \alias{get_spei}
 \title{Get SPEI values from climatic water differential at given frequency and
-integration period.}
+monthly integration period.}
 \usage{
-get_spei(cwdiff, scale = 6, na.rm = FALSE, plot = TRUE, locname = "no name")
+get_spei(cwdiff, scale = 6, na.rm = FALSE, plot = TRUE, locname = "station")
 }
 \arguments{
 \item{cwdiff}{(xts obj) monthly climatic water differential time series}
@@ -16,7 +16,7 @@ get_spei(cwdiff, scale = 6, na.rm = FALSE, plot = TRUE, locname = "no name")
 
 \item{plot}{(bool) Flag for making diagnostic plot of SPEI}
 
-\item{locname}{(string) Name of the site, which appears in the plotc}
+\item{locname}{(string) Name of the site, which appears in the plot}
 }
 \value{
 spei_int (xts obj) spei time series at given integration period

@@ -15,7 +15,7 @@ get_cwdiff <- function(precip, pet){
 }
 
 #' Get SPEI values from climatic water differential at given frequency and
-#' integration period. 
+#' monthly integration period. 
 #'
 #' Optionally make a plot of the data
 #'
@@ -26,12 +26,12 @@ get_cwdiff <- function(precip, pet){
 #' @param scale (int) time scale, or number of months used to calculate SPEI
 #' @param na.rm (bool) flag to mask NA values from the calculation (default=F)
 #' @param plot (bool) Flag for making diagnostic plot of SPEI
-#' @param locname (string) Name of the site, which appears in the plotc
+#' @param locname (string) Name of the site, which appears in the plot
 #' @return spei_int (xts obj) spei time series at given integration period
 #' @return spei_int_interp (xts obj) spei_int with NA values interpolated over
 #' @export
 get_spei <- function(cwdiff, scale=6,
-                     na.rm = FALSE, plot=TRUE, locname='no name'){
+                     na.rm = FALSE, plot=TRUE, locname='station'){
 
     #Get last year and month of timeseries to anchor the timeseries
     # that the spei function will take
@@ -73,3 +73,59 @@ get_spei <- function(cwdiff, scale=6,
 
     return(spei_int)
 }
+
+
+#' Add calculated PET (thornthwaite) and SPEI columns to a dataframe . 
+#'
+#' Optionally make a plot of the data
+#'
+#' Default frequency is monthly (freq=12) but there may be ways to make
+#' weekly frequency work (freq=52) if weekly PET is available.
+#'
+#' @param df (dataframe) dataframe with a date index, temp, ppt and lat
+#' (latitude) columns
+#' @param tcol (string) column name for monthly temperature
+#' @param pcol (string) column name for monthly precipitation total
+#' @param scale_mo (int) time scale, or number of months used to calculate SPEI
+#' @param na.rm (bool) flag to mask NA values from the calculation (default=F)
+#' @param plot (bool) Flag for making diagnostic plot of SPEI
+#' @param loc (string) Name of the site, which appears in the plot & varname
+#' @return df_out (dataframe) df with PET and SPEI columns added
+#' @export
+add_spei_cols <- function(df, tcol, pcol, scale_mo=12,
+                     na.rm = FALSE, plot=TRUE, loc=NULL){
+  #Calculate PET using thornthwaite method
+  pet <- SPEI::thornthwaite(df[tcol], unique(df$lat))
+  # Prepare datetime index
+  df['month'] <- lubridate::month(df$date)
+  df['year'] <- lubridate::year(df$date)
+  dateidx <- zoo::as.yearmon(paste(df$month, '/', df$year, sep=''), "%m/%Y")
+  # Precip and PET timeseries
+  prcp_xts <- xts::xts(df[pcol], order.by=dateidx)
+  pet_xts <- xts::xts(as.numeric(pet), order.by=dateidx)
+  
+  # Get spei tools, if not already installed use:
+  # devtools::install_github("gremau/rclimtools")
+  ## Climatic water differential
+  cwdiff <- get_cwdiff(prcp_xts, pet_xts)
+  
+  ## Now get spei at specified scale (and use name if given)
+  if(!is.null(loc)){
+    spei_scale <- get_spei(cwdiff, scale=scale_mo, locname=loc)
+    pet_vname <- paste0('pet_tho_', loc)
+    spei_vname <- paste0('spei', as.character(scale_mo), 'mo_', loc)
+  } else {
+    spei_scale <- get_spei(cwdiff, scale=scale_mo)
+    pet_vname <- 'pet_tho'
+    spei_vname <- paste0('spei', as.character(scale_mo), 'mo')
+  }
+  # Extract values
+  spei_xts <- xts::xts(as.vector(spei_scale$fitted),
+                       order.by=zoo::index(cwdiff))
+  
+  # Add PET and SPEI values to dataframe and return
+  df[pet_vname] <- as.vector(pet_xts)
+  df[spei_vname] <- as.vector(spei_xts)
+  return(df)
+}
+  
