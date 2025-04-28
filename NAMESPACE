@@ -3,3 +3,6 @@
 export(add_spei_cols)
 export(get_cwdiff)
 export(get_spei)
+export(ghcn_df_subset)
+export(ghcn_inventory)
+export(ghcn_summary_data)

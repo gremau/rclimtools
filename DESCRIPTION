@@ -1,16 +1,18 @@
 Package: rclimtools
 Title: Climate tools in R
 Version: 0.1.0
-Authors@R: 
+Authors@R:
     person("Gregory", "Maurer", , "gmaurer@nmsu.edu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-3007-8058"))
 Description: Assorted tools to calculate derived climate metrics and other tasks.
 License: use_mit_license()
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.2
 Imports:
     zoo,
     xts,
-    lubridate,
-    SPEI
+    SPEI,
+    httr2,
+    readr,
+    lubridate
