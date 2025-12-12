@@ -1,0 +1,29 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: rclimtools
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Gregory
+    family-names: Maurer
+    email: gmaurer@nmsu.edu
+    affiliation: New Mexico State University
+    orcid: 'https://orcid.org/0000-0002-3007-8058'
+repository-code: 'https://github.com/gremau/rclimtools'
+abstract: >-
+  A collection of tools for long-term climate analysis
+  written in R.
+keywords:
+  - R
+  - climate
+  - meteorology
+  - aridity
+  - long-term
+license: MIT
+commit: 3eed68cc9cc87e9e93e5a67bd96e9c716cf3c0e3
+version: '0.1'
+date-released: '2025-12-12'
